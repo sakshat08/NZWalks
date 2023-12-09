@@ -5,5 +5,7 @@ namespace NZWalks.API.Repository
     public interface IWalkRepository
     {
         public Task<WalkDto> CreateWalk(AddWalkRequestDto walk);
+
+        public Task<List<WalkDto>> GetAllWalks();
     }
 }

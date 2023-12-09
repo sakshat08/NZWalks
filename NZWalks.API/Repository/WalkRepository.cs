@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Database;
 using NZWalks.API.Model.Domain;
 using NZWalks.API.Model.DTO;
@@ -28,6 +29,15 @@ namespace NZWalks.API.Repository
             var walkDto = this.mapper.Map<WalkDto>(walkDomainModel);
 
             return walkDto;
+        }
+
+        public async Task<List<WalkDto>> GetAllWalks()
+        {
+            var walksDomainList = await this.nZWalksDbContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
+
+            var walkDtoList = this.mapper.Map<List<WalkDto>>(walksDomainList);
+
+            return walkDtoList;
         }
     }
 }
