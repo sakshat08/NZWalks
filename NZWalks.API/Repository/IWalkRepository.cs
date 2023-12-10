@@ -6,7 +6,10 @@ namespace NZWalks.API.Repository
     {
         public Task<WalkDto> CreateWalk(AddWalkRequestDto walk);
 
-        public Task<List<WalkDto>> GetAllWalks();
+        public Task<List<WalkDto>> GetAllWalks(bool isAscending,
+                                               string? filterOn = null,
+                                               string? filterQuery = null,
+                                               string? sortBy = null);
 
         public Task<WalkDto?> GetWalkById(Guid id);
 

@@ -35,7 +35,7 @@ namespace NZWalks.API.Repository
         {
             var walkDomainModel = await this.nZWalksDbContext.Walks.FirstOrDefaultAsync(x => x.Id == id);
 
-            if(walkDomainModel == null)
+            if (walkDomainModel == null)
             {
                 return null;
             }
@@ -49,9 +49,36 @@ namespace NZWalks.API.Repository
             return walkDtoModel;
         }
 
-        public async Task<List<WalkDto>> GetAllWalks()
+        public async Task<List<WalkDto>> GetAllWalks(bool isAscending, string? filterOn = null, string? filterQuery = null, string? sortBy = null)
         {
-            var walksDomainList = await this.nZWalksDbContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
+            // Converting to Query Method
+            var walks = this.nZWalksDbContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
+
+            
+
+            // Filtering 
+            if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
+            {
+                if (filterOn.Equals("Name", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    walks = walks.Where(x => x.Name.Contains(filterQuery));
+                }
+            }
+
+            // Sorting
+            if (!string.IsNullOrWhiteSpace(sortBy)) 
+            {
+                if (sortBy.Equals("Name", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    walks = isAscending ? walks.OrderBy(x => x.Name) : walks.OrderByDescending(x => x.Name);
+                }
+                else if (sortBy.Equals("LengthInKm", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    walks = isAscending ? walks.OrderBy(x => x.LengthInKm) : walks.OrderByDescending(x => x.LengthInKm);
+                }
+            }
+
+            var walksDomainList = await walks.ToListAsync();
 
             var walkDtoList = this.mapper.Map<List<WalkDto>>(walksDomainList);
 
