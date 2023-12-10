@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using NZWalks.API.Model.DTO;
 using NZWalks.API.Repository;
+using NZWalks.API.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace NZWalks.API.Controllers
 {
@@ -12,14 +14,16 @@ namespace NZWalks.API.Controllers
     {
         private readonly IWalkRepository walkRepository;
 
-        public WalkController(IWalkRepository walkRepository) 
+        public WalkController(IWalkRepository walkRepository)
         {
             this.walkRepository = walkRepository;
         }
 
         [HttpPost]
+        [CustomValidator]
         public async Task<IActionResult> CreateWalk([FromBody] AddWalkRequestDto addWalksRequestDto)
         {
+
             if (addWalksRequestDto == null)
             {
                 return BadRequest("Walk Details are Empty");
@@ -28,6 +32,7 @@ namespace NZWalks.API.Controllers
             var walkDto = await this.walkRepository.CreateWalk(addWalksRequestDto);
 
             return Ok(walkDto);
+
         }
 
         [HttpGet]
@@ -54,8 +59,10 @@ namespace NZWalks.API.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
+        [CustomValidator]
         public async Task<IActionResult> UpdateRegion([FromRoute] Guid id, [FromBody] UpdateWalkRequestDto updateWalkRequestDto)
         {
+
             if (updateWalkRequestDto == null)
             {
                 return NotFound("You have added Empty Update Model");
@@ -63,7 +70,7 @@ namespace NZWalks.API.Controllers
 
             var walkDto = await this.walkRepository.UpdateWalk(id, updateWalkRequestDto);
 
-            if(walkDto == null)
+            if (walkDto == null)
             {
                 return NotFound($"No Walk Founf associated to {id}");
             }
