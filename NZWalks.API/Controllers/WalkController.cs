@@ -40,9 +40,11 @@ namespace NZWalks.API.Controllers
             [FromQuery] string? filterOn,
             [FromQuery] string? filterQuery,
             [FromQuery] string? sortBy,
-            [FromQuery] bool isAscending)
+            [FromQuery] bool isAscending,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 5)
         {
-            var walkDtoList = await this.walkRepository.GetAllWalks(isAscending, filterOn, filterQuery, sortBy);
+            var walkDtoList = await this.walkRepository.GetAllWalks(isAscending, filterOn, filterQuery, sortBy, pageNumber, pageSize);
 
             return Ok(walkDtoList);
         }

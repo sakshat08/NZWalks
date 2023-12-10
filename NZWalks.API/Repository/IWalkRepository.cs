@@ -9,7 +9,9 @@ namespace NZWalks.API.Repository
         public Task<List<WalkDto>> GetAllWalks(bool isAscending,
                                                string? filterOn = null,
                                                string? filterQuery = null,
-                                               string? sortBy = null);
+                                               string? sortBy = null,
+                                               int pageNumber = 1,
+                                               int pageSize = 5);
 
         public Task<WalkDto?> GetWalkById(Guid id);
 

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Database;
 using NZWalks.API.Model.Domain;
 using NZWalks.API.Model.DTO;
+using System.Linq;
 
 namespace NZWalks.API.Repository
 {
@@ -49,12 +50,15 @@ namespace NZWalks.API.Repository
             return walkDtoModel;
         }
 
-        public async Task<List<WalkDto>> GetAllWalks(bool isAscending, string? filterOn = null, string? filterQuery = null, string? sortBy = null)
+        public async Task<List<WalkDto>> GetAllWalks(bool isAscending,
+                                                     string? filterOn = null,
+                                                     string? filterQuery = null,
+                                                     string? sortBy = null,
+                                                     int pageNumber = 1,
+                                                     int pageSize = 5)
         {
             // Converting to Query Method
             var walks = this.nZWalksDbContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
-
-            
 
             // Filtering 
             if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
@@ -77,6 +81,11 @@ namespace NZWalks.API.Repository
                     walks = isAscending ? walks.OrderBy(x => x.LengthInKm) : walks.OrderByDescending(x => x.LengthInKm);
                 }
             }
+
+            // Pagination
+            int maximumPage = (walks.Count() % pageSize == 0 ? walks.Count() / pageSize : ((walks.Count() / pageSize) + 1));
+
+            walks = walks.Skip(((pageNumber - 1) * pageSize)).Take(pageSize);
 
             var walksDomainList = await walks.ToListAsync();
 
