@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using NZWalks.API.Model.DTO;
 using NZWalks.API.Repository;
+using NZWalks.API.Validation;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices;
 
 namespace NZWalks.API.Controllers
@@ -40,8 +42,10 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpPost]
+        [CustomValidator]
         public async Task<IActionResult> CreateRegion([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
+
             if (addRegionRequestDto == null)
             {
                 return BadRequest();
@@ -55,8 +59,10 @@ namespace NZWalks.API.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
+        [CustomValidator]
         public async Task<IActionResult> UpdateRegion([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
+
             var regionDto = await this.regionRepository.UpdateRegion(id, updateRegionRequestDto);
 
             if (regionDto == null)
