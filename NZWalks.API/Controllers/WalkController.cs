@@ -37,5 +37,52 @@ namespace NZWalks.API.Controllers
 
             return Ok(walkDtoList);
         }
+
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetWalkById([FromRoute] Guid id)
+        {
+            var walkDto = await this.walkRepository.GetWalkById(id);
+
+            if (walkDto == null)
+            {
+                return NotFound($"No Walk Founf associated to {id}");
+            }
+
+            return Ok(walkDto);
+        }
+
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateRegion([FromRoute] Guid id, [FromBody] UpdateWalkRequestDto updateWalkRequestDto)
+        {
+            if (updateWalkRequestDto == null)
+            {
+                return NotFound("You have added Empty Update Model");
+            }
+
+            var walkDto = await this.walkRepository.UpdateWalk(id, updateWalkRequestDto);
+
+            if(walkDto == null)
+            {
+                return NotFound($"No Walk Founf associated to {id}");
+            }
+
+            return Ok(walkDto);
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteWalk([FromRoute] Guid id)
+        {
+            var walkDto = await this.walkRepository.DeleteWalk(id);
+
+            if (walkDto == null)
+            {
+                return NotFound($"No Walk Founf associated to {id}");
+            }
+
+            return Ok(walkDto);
+        }
     }
 }
