@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NZWalks.API.Model.DTO;
 using NZWalks.API.Repository;
 using NZWalks.API.Validation;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
 
 namespace NZWalks.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RegionController : ControllerBase
     {
         private readonly IRegionRepository regionRepository;

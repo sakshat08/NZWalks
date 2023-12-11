@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NZWalks.API.Model.DTO;
 using NZWalks.API.Repository;
 using NZWalks.API.Validation;
-using System.ComponentModel.DataAnnotations;
 
 namespace NZWalks.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class WalkController : ControllerBase
     {
         private readonly IWalkRepository walkRepository;
