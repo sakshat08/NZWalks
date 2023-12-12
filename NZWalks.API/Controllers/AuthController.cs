@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NZWalks.API.Model.DTO;
+using NZWalks.API.Repository;
 
 namespace NZWalks.API.Controllers
 {
@@ -10,10 +11,12 @@ namespace NZWalks.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
+        private readonly ITokenRepository tokenRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
             this.userManager = userManager;
+            this.tokenRepository = tokenRepository;
         }
 
         //Post for registration
@@ -42,6 +45,56 @@ namespace NZWalks.API.Controllers
             }
 
             return BadRequest("Something Went Wrong");
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            var user = await userManager.FindByEmailAsync(loginDto.Username);
+
+            if (user == null)
+            {
+                return BadRequest("Username Incorrect");
+            }
+            else
+            {
+                var checkPasswordResult = await userManager.CheckPasswordAsync(user, loginDto.Password);
+                if (checkPasswordResult)
+                {
+                    // Get roles for user
+                    var userRoles = await userManager.GetRolesAsync(user);
+
+                    // Create Token
+                    if(userRoles != null && userRoles.Any())
+                    {
+                        var token = tokenRepository.CreateJwtToken(user, userRoles.ToList());
+
+                        if (token != null)
+                        {
+                            var responseDto = new LoginResponseDto()
+                            {
+                                JwtToken = token,
+                                Message = "You Can use this token for login it is valid for 15 min."
+                            };
+
+                            return Ok(responseDto);
+                        }
+                        else
+                        {
+                            return BadRequest("Token not generated for user");
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest("User dont have any roles");
+                    }
+                }
+                else
+                {
+                    return BadRequest("Password is incorrect");
+                }
+            }
         }
     }
 }

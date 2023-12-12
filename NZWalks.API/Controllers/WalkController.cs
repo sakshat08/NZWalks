@@ -8,7 +8,6 @@ namespace NZWalks.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class WalkController : ControllerBase
     {
         private readonly IWalkRepository walkRepository;
@@ -20,6 +19,7 @@ namespace NZWalks.API.Controllers
 
         [HttpPost]
         [CustomValidator]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateWalk([FromBody] AddWalkRequestDto addWalksRequestDto)
         {
 
@@ -35,6 +35,8 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Reader")]
+
         public async Task<IActionResult> GetAllWalks(
             [FromQuery] string? filterOn,
             [FromQuery] string? filterQuery,
@@ -50,6 +52,7 @@ namespace NZWalks.API.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetWalkById([FromRoute] Guid id)
         {
             var walkDto = await this.walkRepository.GetWalkById(id);
@@ -65,6 +68,7 @@ namespace NZWalks.API.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [CustomValidator]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> UpdateRegion([FromRoute] Guid id, [FromBody] UpdateWalkRequestDto updateWalkRequestDto)
         {
 
@@ -85,6 +89,7 @@ namespace NZWalks.API.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteWalk([FromRoute] Guid id)
         {
             var walkDto = await this.walkRepository.DeleteWalk(id);
