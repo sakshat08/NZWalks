@@ -27,7 +27,7 @@ namespace NZWalksUnitTests.Controller
             ///
 
             var actual = await this.controller.GetRegionById(new Guid());
-            actual.Should().BeOfType<OkObjectResult>();
+            actual.Should().BeOfType<NotFoundObjectResult>();
         }
     }
 }
