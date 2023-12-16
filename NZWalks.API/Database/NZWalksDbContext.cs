@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Model.Domain;
 using static System.Net.Mime.MediaTypeNames;
+using Image = NZWalks.API.Model.Domain.Image;
 
 namespace NZWalks.API.Database
 {
@@ -16,6 +17,8 @@ namespace NZWalks.API.Database
         public DbSet<Region> Regions { get; set; }
 
         public DbSet<Walk> Walks { get; set; }
+
+        public DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
